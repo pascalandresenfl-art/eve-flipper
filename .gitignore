@@ -1,0 +1,91 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build output
+/build/
+/tmp/
+/output/
+.playwright-cli/
+
+# Local clone of GitHub wiki (for editing wiki from repo)
+wiki-repo/
+
+# Old docs/wiki markdown dump + local notes (do not track in repo)
+docs/
+
+# Local marketing landing (work in progress, do not track yet)
+landing/
+
+# SDE data cache (large, auto-downloaded)
+/data/
+# Station AI wiki RAG mirror/index artifacts (generated)
+/data/wiki-rag/
+/tmp/wiki-rag/
+/internal/api/data/wiki-rag/
+/scripts
+# SQLite database files
+flipper.db
+flipper.db-shm
+flipper.db-wal
+
+# Legacy config backup
+config.json
+config.json.bak
+
+# Frontend dependencies
+frontend/node_modules/
+
+# Frontend build output
+frontend/dist/
+frontend/tmp/
+
+# TypeScript build cache
+frontend/tsconfig.tsbuildinfo
+
+# Air live-reload config
+.air.toml
+
+# Claude settings
+.claude/
+CLAUDE.md
+
+# Local Codex configuration and project skills
+/.codex/
+
+# Graphify knowledge graph output
+graphify-out/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment files
+.out
+.env
+.env.local
+.env.*.local
+frontend/.env
+frontend/.env.local
+NUL
+tmp_ai_server.log
+tmp_ai_server.err
+eve-flipper-*.log
+eve-flipper-*.err
+
+# Local Discord setup/scratch workspace (do not track)
+discord-local/
+
+# Local security assessments can contain IPs, credentials, and attack paths
+security/

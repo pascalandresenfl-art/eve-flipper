@@ -1,0 +1,3266 @@
+export interface FlipResult {
+  TypeID: number;
+  TypeName: string;
+  Volume: number;
+  IsContraband?: boolean;
+  IskPerM3?: number;
+  BuyPrice: number;
+  BestAskPrice?: number;
+  BestAskQty?: number;
+  BuyStation: string;
+  BuySystemName: string;
+  BuySystemID: number;
+  BuyRegionID?: number;
+  BuyRegionName?: string;
+  BuyLocationID?: number;
+  SellPrice: number;
+  BestBidPrice?: number;
+  BestBidQty?: number;
+  SellStation: string;
+  SellSystemName: string;
+  SellSystemID: number;
+  SellRegionID?: number;
+  SellRegionName?: string;
+  SellLocationID?: number;
+  ProfitPerUnit: number;
+  MarginPercent: number;
+  UnitsToBuy: number;
+  BuyOrderRemain: number;
+  SellOrderRemain: number;
+  TotalProfit: number;
+  ProfitPerJump: number;
+  BuyJumps: number;
+  SellJumps: number;
+  TotalJumps: number;
+  DailyVolume: number;
+  Velocity: number;
+  PriceTrend: number;
+  S2BPerDay?: number;
+  BfSPerDay?: number;
+  S2BBfSRatio?: number;
+  RealMarginPercent?: number;
+  HistoryAvailable?: boolean;
+  BuyCompetitors: number;
+  SellCompetitors: number;
+  DailyProfit: number;
+  /** Expected fill prices from execution plan (order book depth) */
+  ExpectedBuyPrice?: number;
+  ExpectedSellPrice?: number;
+  ExpectedProfit?: number;
+  RealProfit?: number;
+  FilledQty?: number;
+  CanFill?: boolean;
+  ExecutionQuote?: ExecutionQuote;
+  SlippageBuyPct?: number;
+  SlippageSellPct?: number;
+  FillTimeDays?: number;
+  LiquidityScore?: number;
+  LiquidityLabel?: string;
+  BacktestDays?: number;
+  BacktestFillRate?: number;
+  BacktestMedianVol?: number;
+  CharacterAssets?: number;
+  CharacterBuyOrders?: number;
+  CharacterSellOrders?: number;
+  RouteSafetyMultiplier?: number;
+  RouteSafetyDanger?: "green" | "yellow" | "red" | string;
+  RouteSafetyKills?: number;
+  RouteSafetyISK?: number;
+  // Regional day-trader enrichments (for EveGuru-style regional view in ScanResultsTable)
+  DaySecurity?: number;
+  DaySourceUnits?: number;
+  DayTargetDemandPerDay?: number;
+  DayTargetSupplyUnits?: number;
+  DayTargetDOS?: number;
+  DayAssets?: number;
+  DayActiveOrders?: number;
+  DaySourceAvgPrice?: number;
+  DayTargetNowPrice?: number;
+  DayTargetPeriodPrice?: number;
+  DayNowProfit?: number;
+  DayPeriodProfit?: number;
+  DayROINow?: number;
+  DayROIPeriod?: number;
+  DayCapitalRequired?: number;
+  DayShippingCost?: number;
+  DayCategoryID?: number;
+  DayGroupID?: number;
+  DayGroupName?: string;
+  /** ISK profit per m³ of cargo per jump — efficiency metric for haulers */
+  DayIskPerM3Jump?: number;
+  /** Composite 0-100 trade score (ROI 35% + Demand 25% + DOS 20% + Margin 20%) */
+  DayTradeScore?: number;
+  /** Last N daily average prices for the target region (spark-line chart) */
+  DayPriceHistory?: number[];
+  /** Lowest sell order price at the destination — populated in sell-order mode */
+  DayTargetLowestSell?: number;
+  DayDiagnosticRejected?: boolean;
+  DayDiagnosticReason?: string;
+  DayDiagnosticDetails?: string[];
+  DayMarketDataStatus?: string;
+}
+
+export interface FlipBacktestTrade {
+  type_id: number;
+  type_name: string;
+  entry_date: string;
+  exit_date: string;
+  status: "closed" | "open" | string;
+  quantity: number;
+  requested_quantity?: number;
+  buy_price: number;
+  sell_price: number;
+  buy_cost: number;
+  sell_revenue: number;
+  pnl: number;
+  roi_percent: number;
+  fillable: boolean;
+  fill_percent?: number;
+  fill_source?: string;
+  fill_reason?: string;
+  source_volume?: number;
+  target_volume: number;
+  buy_snapshot_id?: number;
+  sell_snapshot_id?: number;
+  snapshot_age_seconds?: number;
+  route_time_minutes?: number;
+  route_jumps?: number;
+  cargo_trips?: number;
+  route_safety_multiplier?: number;
+  route_danger?: "green" | "yellow" | "red" | string;
+  route_kills?: number;
+}
+
+export interface FlipBacktestItemSummary {
+  type_id: number;
+  type_name: string;
+  trades: number;
+  closed_trades: number;
+  open_trades: number;
+  total_pnl: number;
+  realized_pnl: number;
+  mtm_pnl: number;
+  win_rate: number;
+  avg_roi: number;
+  fill_rate: number;
+}
+
+export interface FlipBacktestEquityPoint {
+  date: string;
+  equity: number;
+  realized: number;
+  drawdown: number;
+  day_pnl: number;
+  day_trades: number;
+  total_trades: number;
+}
+
+export interface FlipBacktestSummary {
+  rows_tested: number;
+  trades: number;
+  closed_trades: number;
+  open_trades: number;
+  total_pnl: number;
+  realized_pnl: number;
+  mtm_pnl: number;
+  win_rate: number;
+  avg_roi: number;
+  max_drawdown_isk: number;
+  max_drawdown_pct: number;
+  best_trade_pnl: number;
+  worst_trade_pnl: number;
+  backtest_days: number;
+  hold_days: number;
+  strategy_mode?: "hold" | "instant_flip" | string;
+  travel_cooldown_days?: number;
+  cooldown_minutes?: number;
+  cooldown_mode?: "manual" | "route_time" | string;
+  data_source?: "recorded_orderbook" | string;
+  orderbook_max_age_minutes?: number;
+  avg_route_time_minutes?: number;
+  max_route_time_minutes?: number;
+  route_safety_mode?: "manual" | "auto" | string;
+  avg_route_safety_multiplier?: number;
+  max_route_safety_multiplier?: number;
+}
+
+export interface FlipBacktestAssumptions {
+  strategy_mode: string;
+  price_model: string;
+  data_source: string;
+  quantity_mode: string;
+  volume_fill_fraction: number;
+  partial_fill_behavior: string;
+  buy_price_basis: string;
+  sell_price_basis: string;
+  fill_model: string;
+  cooldown_model: string;
+  fee_model: string;
+  includes_open_mtm: boolean;
+  uses_recorded_orderbook: boolean;
+  uses_vwap_depth: boolean;
+  uses_daily_history: boolean;
+  orderbook_max_age_minutes?: number;
+}
+
+export interface FlipBacktestDiagnostics {
+  rows_tested: number;
+  candidate_entries: number;
+  executed_trades: number;
+  full_fills: number;
+  partial_fills: number;
+  unfilled_trades: number;
+  skipped_missing_price: number;
+  skipped_no_quantity: number;
+  skipped_unfillable: number;
+  skipped_below_roi: number;
+  skipped_no_pair: number;
+  replay_source_books?: number;
+  replay_target_books?: number;
+  replay_paired_books?: number;
+  replay_errors?: number;
+  requested_quantity: number;
+  executed_quantity: number;
+  avg_fill_percent: number;
+  executable_fill_percent: number;
+  avg_roi: number;
+  best_roi: number;
+  worst_roi: number;
+  profit_per_trade_isk: number;
+  avg_capital_isk: number;
+  capital_turnover_isk: number;
+  estimated_isk_per_hour?: number;
+}
+
+export interface FlipBacktestResult {
+  summary: FlipBacktestSummary;
+  items: FlipBacktestItemSummary[];
+  ledger: FlipBacktestTrade[];
+  equity: FlipBacktestEquityPoint[];
+  assumptions: FlipBacktestAssumptions;
+  diagnostics: FlipBacktestDiagnostics;
+  warnings?: string[];
+}
+
+export interface OrderBookCoverageRow {
+  type_id: number;
+  type_name: string;
+  status:
+    | "ready"
+    | "missing_source"
+    | "missing_target"
+    | "no_pairs"
+    | "invalid_scope"
+    | "query_error"
+    | string;
+  reason: string;
+  source_books: number;
+  target_books: number;
+  paired_books: number;
+  source_depth: number;
+  target_depth: number;
+  source_levels: number;
+  target_levels: number;
+  oldest_capture: string;
+  newest_capture: string;
+}
+
+export interface OrderBookCoverageSummary {
+  rows_tested: number;
+  rows_ready: number;
+  rows_missing_source: number;
+  rows_missing_target: number;
+  rows_no_pairs: number;
+  rows_invalid_scope: number;
+  source_books: number;
+  target_books: number;
+  paired_books: number;
+  source_depth: number;
+  target_depth: number;
+  ready_percent: number;
+  oldest_capture: string;
+  newest_capture: string;
+  backtest_days: number;
+  max_age_minutes: number;
+}
+
+export interface OrderBookCoverageResult {
+  summary: OrderBookCoverageSummary;
+  rows: OrderBookCoverageRow[];
+  warnings?: string[];
+}
+
+export interface OrderBookStatsType {
+  type_id: number;
+  snapshot_count: number;
+  level_count: number;
+  volume_remain: number;
+}
+
+export interface OrderBookStatsLocation {
+  location_id: number;
+  snapshot_count: number;
+  level_count: number;
+  volume_remain: number;
+}
+
+export interface OrderBookStats {
+  snapshot_count: number;
+  level_count: number;
+  unique_type_count: number;
+  unique_location_count: number;
+  total_volume_remain: number;
+  approx_bytes: number;
+  oldest_captured_at: string;
+  newest_captured_at: string;
+  top_types: OrderBookStatsType[];
+  top_locations: OrderBookStatsLocation[];
+}
+
+export interface OrderBookCleanupPlan {
+  keep_days: number;
+  cutoff: string;
+  dry_run: boolean;
+  vacuum: boolean;
+  snapshots_deleted: number;
+  levels_deleted: number;
+  oldest_remaining: string;
+  newest_remaining: string;
+}
+
+export type PaperTradeStatus =
+  | "planned"
+  | "bought"
+  | "hauled"
+  | "listed"
+  | "sold"
+  | "reconciled"
+  | "cancelled";
+
+export interface PaperTrade {
+  id: number;
+  user_id: string;
+  status: PaperTradeStatus | string;
+  type_id: number;
+  type_name: string;
+  planned_quantity: number;
+  actual_quantity: number;
+  planned_buy_price: number;
+  planned_sell_price: number;
+  actual_buy_price: number;
+  actual_sell_price: number;
+  planned_profit_isk: number;
+  planned_roi_percent: number;
+  fees_isk: number;
+  hauling_cost_isk: number;
+  buy_station: string;
+  sell_station: string;
+  buy_system_name: string;
+  sell_system_name: string;
+  buy_system_id: number;
+  sell_system_id: number;
+  buy_region_id: number;
+  sell_region_id: number;
+  buy_location_id: number;
+  sell_location_id: number;
+  volume_m3: number;
+  notes: string;
+  source: string;
+  created_at: string;
+  updated_at: string;
+  closed_at: string;
+  expected_profit_isk: number;
+  realized_profit_isk: number;
+  capital_isk: number;
+  roi_percent: number;
+}
+
+export type PaperTradeCreatePayload = Partial<
+  Pick<
+    PaperTrade,
+    | "status"
+    | "type_id"
+    | "type_name"
+    | "planned_quantity"
+    | "actual_quantity"
+    | "planned_buy_price"
+    | "planned_sell_price"
+    | "actual_buy_price"
+    | "actual_sell_price"
+    | "planned_profit_isk"
+    | "planned_roi_percent"
+    | "fees_isk"
+    | "hauling_cost_isk"
+    | "buy_station"
+    | "sell_station"
+    | "buy_system_name"
+    | "sell_system_name"
+    | "buy_system_id"
+    | "sell_system_id"
+    | "buy_region_id"
+    | "sell_region_id"
+    | "buy_location_id"
+    | "sell_location_id"
+    | "volume_m3"
+    | "notes"
+    | "source"
+  >
+> & {
+  type_id: number;
+  type_name: string;
+  planned_quantity: number;
+};
+
+export type PaperTradePatch = Partial<
+  Pick<
+    PaperTrade,
+    | "status"
+    | "planned_quantity"
+    | "actual_quantity"
+    | "planned_buy_price"
+    | "planned_sell_price"
+    | "actual_buy_price"
+    | "actual_sell_price"
+    | "planned_profit_isk"
+    | "planned_roi_percent"
+    | "fees_isk"
+    | "hauling_cost_isk"
+    | "notes"
+  >
+>;
+
+export interface PaperTradeReconcilePatch {
+  status?: PaperTradeStatus | string;
+  actual_quantity?: number;
+  actual_buy_price?: number;
+  actual_sell_price?: number;
+}
+
+export interface PaperTradeReconcileRow {
+  trade_id: number;
+  suggested_status: PaperTradeStatus | string;
+  confidence: "high" | "medium" | "low" | "none" | string;
+  reason: string;
+  matched_buy_qty: number;
+  matched_sell_qty: number;
+  avg_buy_price: number;
+  avg_sell_price: number;
+  open_buy_qty: number;
+  open_sell_qty: number;
+  asset_qty: number;
+  buy_location_asset_qty: number;
+  sell_location_asset_qty: number;
+  suggested_patch?: PaperTradeReconcilePatch | null;
+}
+
+export interface PaperTradeReconcileSummary {
+  trades_checked: number;
+  matched: number;
+  high_confidence: number;
+  medium_confidence: number;
+  low_confidence: number;
+  characters: number;
+  transactions: number;
+  orders: number;
+  assets: number;
+}
+
+export interface PaperTradeReconcileResponse {
+  ok: boolean;
+  summary: PaperTradeReconcileSummary;
+  rows: PaperTradeReconcileRow[];
+  warnings?: string[];
+}
+
+export type TradingEdgeLabelCode =
+  | "good_edge"
+  | "needs_bigger_margin"
+  | "do_not_trade"
+  | "watch"
+  | "insufficient_data"
+  | string;
+
+export interface TradingEdgeRow {
+  key: string;
+  label: string;
+  scope: "item" | "category" | "station" | "overall" | string;
+  trades: number;
+  closed_trades: number;
+  win_rate: number;
+  expected_isk: number;
+  realized_isk: number;
+  delta_isk: number;
+  reality_ratio: number;
+  avg_roi: number;
+  avg_hold_days: number;
+  avg_quantity: number;
+  avg_capital_isk: number;
+  max_recommended_qty: number;
+  min_net_roi_pct: number;
+  max_exposure_isk: number;
+  label_code: TradingEdgeLabelCode;
+  confidence: number;
+  advice: string;
+  reasons: string[];
+}
+
+export interface TradingEdgeLossBucket {
+  key: string;
+  label: string;
+  isk: number;
+  trades: number;
+  share_pct: number;
+}
+
+export interface TradingEdgePreset {
+  id: string;
+  name: string;
+  description: string;
+  min_net_roi_pct: number;
+  max_exposure_isk: number;
+  max_quantity: number;
+  preferred_scopes: string[];
+  avoid_scopes: string[];
+}
+
+export interface TradingEdgeRecommendation {
+  type_id: number;
+  type_name: string;
+  source: string;
+  label_code: TradingEdgeLabelCode;
+  confidence: number;
+  advice: string;
+  reasons: string[];
+  win_rate: number;
+  reality_ratio: number;
+  avg_roi: number;
+  min_net_roi_pct: number;
+  max_recommended_qty: number;
+  max_exposure_isk: number;
+  sample_trades: number;
+}
+
+export interface TradingEdgeSummary {
+  ok: boolean;
+  enabled: boolean;
+  sample_size: number;
+  closed_trades: number;
+  reconciled: number;
+  expected_isk: number;
+  realized_isk: number;
+  delta_isk: number;
+  win_rate: number;
+  reality_ratio: number;
+  items: TradingEdgeRow[];
+  categories: TradingEdgeRow[];
+  stations: TradingEdgeRow[];
+  loss_buckets: TradingEdgeLossBucket[];
+  presets: TradingEdgePreset[];
+  recommendation?: TradingEdgeRecommendation;
+  warnings?: string[];
+}
+
+export interface RegionalDayTradeItem {
+  type_id: number;
+  type_name: string;
+  is_contraband?: boolean;
+  source_system_id: number;
+  source_system_name: string;
+  source_station_name: string;
+  source_location_id: number;
+  source_region_id: number;
+  source_region_name: string;
+  target_system_id: number;
+  target_system_name: string;
+  target_station_name: string;
+  target_location_id: number;
+  target_region_id: number;
+  target_region_name: string;
+  purchase_units: number;
+  source_units: number;
+  target_demand_per_day: number;
+  target_supply_units: number;
+  target_dos: number;
+  assets: number;
+  active_orders: number;
+  source_avg_price: number;
+  target_now_price: number;
+  target_period_price: number;
+  target_now_profit: number;
+  target_period_profit: number;
+  roi_now: number;
+  roi_period: number;
+  capital_required: number;
+  item_volume: number;
+  shipping_cost: number;
+  jumps: number;
+  margin_now: number;
+  margin_period: number;
+  category_id?: number;
+  group_id?: number;
+  group_name?: string;
+  trade_score?: number;
+  target_price_history?: number[];
+  target_lowest_sell?: number;
+  diagnostic_rejected?: boolean;
+  diagnostic_reason?: string;
+  diagnostic_details?: string[];
+  market_data_status?: string;
+}
+
+export interface RegionalDayTradeHub {
+  source_system_id: number;
+  source_system_name: string;
+  source_region_id: number;
+  source_region_name: string;
+  security: number;
+  purchase_units: number;
+  source_units: number;
+  target_demand_per_day: number;
+  target_supply_units: number;
+  target_dos: number;
+  assets: number;
+  active_orders: number;
+  target_now_profit: number;
+  target_period_profit: number;
+  capital_required: number;
+  shipping_cost: number;
+  item_count: number;
+  items: RegionalDayTradeItem[];
+}
+
+export interface ContractResult {
+  ContractID: number;
+  Title: string;
+  Price: number;
+  MarketValue: number;
+  Profit: number;
+  MarginPercent: number;
+  ExpectedProfit?: number;
+  ExpectedMarginPercent?: number;
+  SellConfidence?: number;
+  EstLiquidationDays?: number;
+  ConservativeValue?: number;
+  CarryCost?: number;
+  ExcludedRigValue?: number;
+  ExcludedRigQty?: number;
+  ExcludedRigRows?: number;
+  HasContraband?: boolean;
+  ContrabandQty?: number;
+  Volume: number;
+  StationName: string;
+  SystemName?: string;
+  RegionName?: string;
+  LiquidationSystemName?: string;
+  LiquidationRegionName?: string;
+  LiquidationJumps?: number;
+  ItemCount: number;
+  Jumps: number;
+  ProfitPerJump: number;
+}
+
+export interface ContractItem {
+  type_id: number;
+  type_name: string;
+  quantity: number;
+  is_included: boolean;
+  is_blueprint_copy: boolean;
+  group_id?: number;
+  group_name?: string;
+  category_id?: number;
+  is_ship?: boolean;
+  is_rig?: boolean;
+  is_contraband?: boolean;
+  record_id: number;
+  item_id: number;
+  material_efficiency?: number;
+  time_efficiency?: number;
+  runs?: number;
+  flag?: number; // Item location flag (46-53 = fitted rigs, 0/1/5 = cargo/hangar)
+  singleton?: boolean; // True for fitted items
+  damage?: number; // Damage level 0.0-1.0 (0.1 = 10% damaged)
+}
+
+export interface ContractDetails {
+  contract_id: number;
+  items: ContractItem[];
+}
+
+export type NdjsonContractMessage =
+  | { type: "progress"; message: string }
+  | {
+      type: "result";
+      data: ContractResult[];
+      count: number;
+      cache_meta?: StationCacheMeta;
+    }
+  | { type: "error"; message: string };
+
+export interface RouteHop {
+  SystemName: string;
+  StationName: string;
+  SystemID: number;
+  EmptyJumps?: number;
+  DestSystemName: string;
+  DestStationName?: string;
+  DestSystemID: number;
+  TypeName: string;
+  TypeID: number;
+  BuyPrice: number;
+  SellPrice: number;
+  Units: number;
+  Profit: number;
+  Jumps: number;
+  RegionID?: number;
+  VolumeM3?: number;
+  CargoM3?: number;
+  CargoTrips?: number;
+  ExecutionMinutes?: number;
+  ProfitPerHour?: number;
+  DailyVolume?: number;
+  FillTimeDays?: number;
+  LiquidityScore?: number;
+  LiquidityLabel?: string;
+}
+
+export interface RouteResult {
+  Hops: RouteHop[];
+  TotalProfit: number;
+  TotalJumps: number;
+  ProfitPerJump: number;
+  HopCount: number;
+  TargetSystemName?: string;
+  TargetJumps?: number;
+  CargoM3?: number;
+  CargoTrips?: number;
+  ExecutionMinutes?: number;
+  ProfitPerHour?: number;
+  FillTimeDays?: number;
+  LiquidityScore?: number;
+  LiquidityLabel?: string;
+  HaulingRiskKnown?: boolean;
+  HaulingDanger?: "green" | "yellow" | "red" | string;
+  HaulingKills?: number;
+  HaulingISK?: number;
+  HaulingRiskScore?: number;
+  HaulingSafetyMultiplier?: number;
+  CargoValueISK?: number;
+  CourierCollateralISK?: number;
+  CourierRewardFloorISK?: number;
+  CourierRewardPerJumpISK?: number;
+  CourierProfitAfterRewardISK?: number;
+  CourierRiskPremiumPercent?: number;
+  CourierViable?: boolean;
+}
+
+export type NdjsonRouteMessage =
+  | { type: "progress"; message: string }
+  | { type: "result"; data: RouteResult[]; count: number }
+  | { type: "error"; message: string };
+
+export interface WatchlistItem {
+  type_id: number;
+  type_name: string;
+  added_at: string;
+  alert_min_margin: number;
+  alert_enabled?: boolean;
+  alert_metric?:
+    | "margin_percent"
+    | "total_profit"
+    | "profit_per_unit"
+    | "daily_volume";
+  alert_threshold?: number;
+}
+
+export interface AlertHistoryEntry {
+  id: number;
+  watchlist_type_id: number;
+  type_name: string;
+  alert_metric: string;
+  alert_threshold: number;
+  current_value: number;
+  message: string;
+  channels_sent: string[];
+  channels_failed?: Record<string, string>;
+  sent_at: string;
+  scan_id?: number;
+}
+
+export interface ScanRecord {
+  id: number;
+  timestamp: string;
+  tab: string;
+  system: string;
+  count: number;
+  top_profit: number;
+  total_profit: number;
+  duration_ms: number;
+  params: Record<string, unknown>;
+}
+
+export interface StationTrade {
+  TypeID: number;
+  TypeName: string;
+  Volume: number;
+  IsContraband?: boolean;
+  BuyPrice: number;
+  SellPrice: number;
+  Spread: number;
+  MarginPercent: number;
+  ProfitPerUnit: number;
+  DailyVolume: number;
+  BuyOrderCount: number;
+  SellOrderCount: number;
+  BuyVolume: number;
+  SellVolume: number;
+  TotalProfit: number;
+  DailyProfit?: number;
+  TheoreticalDailyProfit?: number;
+  RealizableDailyProfit?: number;
+  ConfidenceScore?: number;
+  ConfidenceLabel?: string;
+  HasExecutionEvidence?: boolean;
+  ROI: number;
+  StationName: string;
+  StationID: number;
+  SystemID?: number;
+  RegionID?: number;
+  CharacterAssets?: number;
+  CharacterBuyOrders?: number;
+  CharacterSellOrders?: number;
+  // EVE Guru style metrics
+  CapitalRequired: number;
+  NowROI: number;
+  PeriodROI: number;
+  BuyUnitsPerDay: number;
+  SellUnitsPerDay: number;
+  BvSRatio: number;
+  S2BPerDay?: number;
+  BfSPerDay?: number;
+  S2BBfSRatio?: number;
+  RealMarginPercent?: number;
+  HistoryAvailable?: boolean;
+  DOS: number;
+  VWAP: number;
+  PVI: number;
+  OBDS: number;
+  SDS: number;
+  CI: number;
+  CTS: number;
+  AvgPrice: number;
+  PriceHigh: number;
+  PriceLow: number;
+  IsExtremePriceFlag: boolean;
+  IsHighRiskFlag: boolean;
+  /** Expected fill prices from execution plan (order book depth) */
+  ExpectedBuyPrice?: number;
+  ExpectedSellPrice?: number;
+  ExpectedProfit?: number;
+  RealProfit?: number;
+  FilledQty?: number;
+  CanFill?: boolean;
+  SlippageBuyPct?: number;
+  SlippageSellPct?: number;
+}
+
+export type NdjsonStationMessage =
+  | { type: "progress"; message: string }
+  | {
+      type: "result";
+      data: StationTrade[];
+      count: number;
+      cache_meta?: StationCacheMeta;
+    }
+  | { type: "error"; message: string };
+
+export interface StationInfo {
+  id: number;
+  name: string;
+  system_id: number;
+  region_id: number;
+  is_structure?: boolean;
+}
+
+export interface StationsResponse {
+  stations: StationInfo[];
+  region_id: number;
+  system_id: number;
+}
+
+export interface SolarSystemInfo {
+  id: number;
+  name: string;
+  security: number;
+  region_id: number;
+}
+
+// Execution plan (slippage / fill curve)
+export interface DepthLevel {
+  price: number;
+  volume: number;
+  cumulative: number;
+  volume_filled: number;
+}
+
+/** Calibrated market impact params (Amihud illiquidity, σ from history). */
+export interface ImpactParams {
+  amihud: number;
+  sigma: number;
+  sigma_sq: number;
+  avg_daily_volume: number;
+  days_used: number;
+  valid: boolean;
+}
+
+/** Impact estimate for a quantity: ΔP% (linear/√V) and TWAP slices. */
+export interface ImpactEstimate {
+  linear_impact_pct: number;
+  sqrt_impact_pct: number;
+  recommended_impact_pct: number;
+  recommended_impact_isk: number;
+  optimal_slices: number;
+  params: ImpactParams;
+}
+
+export interface ExecutionPlanResult {
+  best_price: number;
+  expected_price: number;
+  slippage_percent: number;
+  total_cost: number;
+  volume_filled: number;
+  depth_levels: DepthLevel[];
+  total_depth: number;
+  can_fill: boolean;
+  optimal_slices: number;
+  suggested_min_gap: number;
+  /** Set when market history available (Kyle's λ, √V, TWAP n*). */
+  impact?: ImpactEstimate;
+  quote?: ExecutionQuote;
+}
+
+export type ExecutionQuoteDecision = "SAFE" | "CHANGED" | "DANGER" | string;
+
+export interface ExecutionQuoteCacheInfo {
+  buy_age_seconds?: number;
+  sell_age_seconds?: number;
+  buy_ttl_seconds?: number;
+  sell_ttl_seconds?: number;
+  stale: boolean;
+}
+
+export interface ExecutionQuoteSide {
+  region_id?: number;
+  system_id?: number;
+  location_id?: number;
+  vwap: number;
+  best_price: number;
+  gross_isk: number;
+  fee_isk: number;
+  filled_qty: number;
+  can_fill: boolean;
+  total_depth: number;
+  slippage_percent: number;
+  plan: ExecutionPlanResult;
+}
+
+export interface ExecutionQuote {
+  type_id: number;
+  requested_qty: number;
+  fill_qty: number;
+  partial_reason?: string;
+  buy_vwap: number;
+  sell_vwap: number;
+  buy_gross: number;
+  sell_gross: number;
+  buy_fees: number;
+  sell_fees: number;
+  total_fees: number;
+  shipping_cost: number;
+  shipping_jumps: number;
+  shipping_cost_per_m3_jump: number;
+  packaged_volume_m3: number;
+  filled_volume_m3: number;
+  net_profit: number;
+  profit_per_unit: number;
+  roi_percent: number;
+  decision: ExecutionQuoteDecision;
+  warnings?: string[];
+  cache?: ExecutionQuoteCacheInfo;
+  buy: ExecutionQuoteSide;
+  sell: ExecutionQuoteSide;
+}
+
+export type ExecutionRevalidationStatus = "SAFE" | "CHANGED" | "DANGER";
+
+export interface ExecutionRevalidationRow {
+  key: string;
+  row: FlipResult;
+  quote?: ExecutionQuote;
+  status: ExecutionRevalidationStatus;
+  oldQty: number;
+  nowQty: number;
+  oldBuy: number;
+  nowBuy: number;
+  oldSell: number;
+  nowSell: number;
+  oldProfit: number;
+  nowProfit: number;
+  deltaProfit: number;
+  qtyChanged: boolean;
+  avoid: boolean;
+  reasons: string[];
+}
+
+export interface ExecutionRevalidationReport {
+  createdAt: string;
+  rows: ExecutionRevalidationRow[];
+  safe: number;
+  changed: number;
+  danger: number;
+  totalOldProfit: number;
+  totalNowProfit: number;
+  totalDeltaProfit: number;
+}
+
+export interface ScanParams {
+  system_name: string;
+  ignored_system_ids?: number[];
+  cargo_capacity: number;
+  buy_radius: number;
+  sell_radius: number;
+  min_margin: number;
+  sales_tax_percent: number;
+  broker_fee_percent: number;
+  split_trade_fees?: boolean;
+  buy_broker_fee_percent?: number;
+  sell_broker_fee_percent?: number;
+  buy_sales_tax_percent?: number;
+  sell_sales_tax_percent?: number;
+  min_daily_volume?: number;
+  max_investment?: number;
+  min_item_profit?: number;
+  min_period_roi?: number;
+  max_dos?: number;
+  min_demand_per_day?: number;
+  purchase_demand_days?: number;
+  min_s2b_per_day?: number;
+  min_bfs_per_day?: number;
+  min_s2b_bfs_ratio?: number;
+  max_s2b_bfs_ratio?: number;
+  avg_price_period?: number;
+  shipping_cost_per_m3_jump?: number;
+  /** Route security: 0 = all space, 0.45 = highsec only, 0.7 = min 0.7 */
+  min_route_security?: number;
+  /** Optional source-region scope for regional trade (empty = buy radius from System). */
+  source_regions?: string[];
+  /** Target region name for regional arbitrage (empty = search all by radius) */
+  target_region?: string;
+  /** Optional destination marketplace system for regional day trader. */
+  target_market_system?: string;
+  /** Optional destination marketplace location_id (station/structure). */
+  target_market_location_id?: number;
+  // Contract-specific filters
+  min_contract_price?: number;
+  max_contract_margin?: number;
+  min_priced_ratio?: number;
+  require_history?: boolean;
+  contract_instant_liquidation?: boolean;
+  contract_hold_days?: number;
+  contract_target_confidence?: number;
+  exclude_rigs_with_ship?: boolean;
+  route_min_hops?: number;
+  route_max_hops?: number;
+  route_target_system_name?: string;
+  route_min_isk_per_jump?: number;
+  route_allow_empty_hops?: boolean;
+  route_mode?: "balanced" | "fastest" | "safest" | string;
+  route_ship_profile?: string;
+  route_cargo_capacity?: number;
+  route_minutes_per_jump?: number;
+  route_dock_minutes?: number;
+  route_safety_delay_percent?: number;
+  // Player structures
+  include_structures?: boolean;
+  /** Category filter for regional day trader. Empty = all. */
+  category_ids?: number[];
+  /** When true, use lowest sell order at destination as revenue price instead of highest buy order. */
+  sell_order_mode?: boolean;
+  /** Flipper only: when true restrict sell-side to target_market_system only; when false allow any buy order within sell radius. Default true. */
+  restrict_to_target_market?: boolean;
+  /** Regional Trade only: include capped rejected rows with filter reasons for market-data debugging. */
+  regional_diagnostic_mode?: boolean;
+}
+
+export interface ItemSearchResult {
+  type_id: number;
+  type_name: string;
+  volume: number;
+  group_id: number;
+  group_name?: string;
+  category_id: number;
+}
+
+export interface ItemMarketSummary {
+  region_id: number;
+  region_name: string;
+  best_ask: number;
+  best_ask_volume: number;
+  best_bid: number;
+  best_bid_volume: number;
+  spread: number;
+  spread_percent: number;
+  sell_order_count: number;
+  buy_order_count: number;
+  sell_units: number;
+  buy_units: number;
+  sell_value_isk: number;
+  buy_value_isk: number;
+  sell_units_within_5_pct: number;
+  buy_units_within_5_pct: number;
+  buy_pressure_pct: number;
+  liquidity_score: number;
+  estimated_spread_value: number;
+  depth_bands?: ItemDepthBand[];
+}
+
+export interface ItemDepthBand {
+  band: string;
+  sell_units: number;
+  sell_value_isk: number;
+  buy_units: number;
+  buy_value_isk: number;
+}
+
+export interface ItemHistorySummary {
+  days: number;
+  avg_price: number;
+  avg_volume: number;
+  avg_value_isk: number;
+  low_price: number;
+  high_price: number;
+  price_change_pct: number;
+  volume_change_pct: number;
+  volatility_pct: number;
+  liquidity_days_5_pct: number;
+}
+
+export interface ItemCharacterSummary {
+  assets: number;
+  active_buy_orders: number;
+  active_sell_orders: number;
+  asset_value_isk: number;
+  active_buy_isk: number;
+  active_sell_isk: number;
+  exposure_isk: number;
+  coverage_days: number;
+}
+
+export interface ItemPersonalTradeSummary {
+  buy_quantity: number;
+  sell_quantity: number;
+  buy_isk: number;
+  sell_isk: number;
+  matched_quantity: number;
+  realized_pnl: number;
+  realized_roi_pct: number;
+  turnover_isk: number;
+  last_trade_date?: string;
+  archived_rows_used: number;
+}
+
+export interface ItemRestockSummary {
+  signal: string;
+  reason: string;
+  suggested_action: string;
+  recommended_max_units: number;
+  recommended_max_isk: number;
+  current_coverage: number;
+  coverage_days: number;
+  target_coverage_days: number;
+  missing_units: number;
+  max_entry_price: number;
+  target_sell_price: number;
+  worst_case_exit_price: number;
+  min_spread_pct: number;
+  edge_score: number;
+  confidence_pct: number;
+  risk_flags?: string[];
+}
+
+export interface ItemPeerTradeSummary {
+  scope: string;
+  label: string;
+  archived_rows_used: number;
+  buy_quantity: number;
+  sell_quantity: number;
+  matched_quantity: number;
+  turnover_isk: number;
+  realized_pnl: number;
+  realized_roi_pct: number;
+  last_trade_date?: string;
+}
+
+export interface ItemEdgeSummary {
+  label: string;
+  score: number;
+  confidence_pct: number;
+  recommendation: string;
+  max_position_units: number;
+  max_position_isk: number;
+  daily_capacity: number;
+  reason: string;
+}
+
+export interface ItemRecentTrade {
+  date: string;
+  side: string;
+  quantity: number;
+  unit_price: number;
+  value_isk: number;
+  location_name?: string;
+}
+
+export interface ItemIntelligence {
+  type_id: number;
+  type_name: string;
+  volume: number;
+  group_id: number;
+  group_name?: string;
+  category_id: number;
+  market: ItemMarketSummary;
+  history: ItemHistorySummary;
+  character: ItemCharacterSummary;
+  personal: ItemPersonalTradeSummary;
+  peer: ItemPeerTradeSummary;
+  edge: ItemEdgeSummary;
+  restock: ItemRestockSummary;
+  recent_trades?: ItemRecentTrade[];
+  warnings?: string[];
+}
+
+export interface AppConfig {
+  system_name: string;
+  ignored_system_ids?: number[];
+  cargo_capacity: number;
+  buy_radius: number;
+  sell_radius: number;
+  min_margin: number;
+  sales_tax_percent: number;
+  broker_fee_percent: number;
+  split_trade_fees?: boolean;
+  buy_broker_fee_percent?: number;
+  sell_broker_fee_percent?: number;
+  buy_sales_tax_percent?: number;
+  sell_sales_tax_percent?: number;
+  min_daily_volume?: number;
+  max_investment?: number;
+  min_item_profit?: number;
+  min_s2b_per_day?: number;
+  min_bfs_per_day?: number;
+  min_s2b_bfs_ratio?: number;
+  max_s2b_bfs_ratio?: number;
+  min_route_security?: number;
+  avg_price_period?: number;
+  min_period_roi?: number;
+  max_dos?: number;
+  min_demand_per_day?: number;
+  purchase_demand_days?: number;
+  shipping_cost_per_m3_jump?: number;
+  source_regions?: string[];
+  target_region?: string;
+  target_market_system?: string;
+  target_market_location_id?: number;
+  category_ids?: number[];
+  sell_order_mode?: boolean;
+  regional_diagnostic_mode?: boolean;
+  route_min_hops?: number;
+  route_max_hops?: number;
+  route_target_system_name?: string;
+  route_min_isk_per_jump?: number;
+  route_allow_empty_hops?: boolean;
+  route_mode?: "balanced" | "fastest" | "safest" | string;
+  route_ship_profile?: string;
+  route_cargo_capacity?: number;
+  route_minutes_per_jump?: number;
+  route_dock_minutes?: number;
+  route_safety_delay_percent?: number;
+  alert_telegram: boolean;
+  alert_discord: boolean;
+  alert_desktop: boolean;
+  alert_telegram_token: string;
+  alert_telegram_chat_id: string;
+  alert_discord_webhook: string;
+  opacity: number;
+  window_x: number;
+  window_y: number;
+  window_w: number;
+  window_h: number;
+}
+
+export interface AppStatus {
+  sde_loaded: boolean;
+  sde_systems: number;
+  sde_types: number;
+  esi_ok: boolean;
+  esi_last_ok?: number; // Unix timestamp of last successful ESI check
+}
+
+export type NdjsonMessage =
+  | { type: "progress"; message: string }
+  | { type: "result"; data: FlipResult[]; count: number }
+  | { type: "error"; message: string };
+
+export interface AuthCharacter {
+  character_id: number;
+  character_name: string;
+  active: boolean;
+}
+
+export interface AuthStatus {
+  logged_in: boolean;
+  character_id?: number;
+  character_name?: string;
+  characters?: AuthCharacter[];
+  auth_revision?: number;
+  security_vault?: SecurityVaultStatus;
+  security_migration_required?: boolean;
+}
+
+export interface HostedAccessPlan {
+  id: string;
+  name: string;
+  expires_at?: string;
+  renews_at?: string;
+}
+
+export interface HostedAccessUsage {
+  used: number;
+  limit?: number | null;
+  remaining?: number | null;
+  window: string;
+  resets_at?: string;
+}
+
+export interface HostedAccessPayment {
+  receiver_name?: string;
+  receiver_character_id?: number | null;
+  receiver_corporation_id?: number | null;
+  amount_isk: number;
+  reason_code: string;
+  expires_at?: string;
+  sent_marked_at?: string;
+}
+
+export interface HostedAccessPaymentHistoryItem {
+  code: string;
+  plan_id: string;
+  amount_isk: number;
+  status: "pending" | "matched" | "underpaid" | "expired" | "duplicate" | "unmatched" | "sender_mismatch" | "receiver_mismatch" | "cancelled" | string;
+  created_at: string;
+  expires_at: string;
+  matched_at?: string;
+  matched_amount_isk?: number;
+  sent_marked_at?: string;
+  note?: string;
+}
+
+export interface HostedAccessPlanOffer {
+  id: string;
+  name: string;
+  price_isk: number;
+  period_days: number;
+  scan_limit_per_day?: number | null;
+  station_ai_limit_per_day?: number | null;
+  features?: string[];
+}
+
+export interface HostedAccessStatus {
+  hosted: boolean;
+  plan: HostedAccessPlan;
+  status: "local" | "free" | "trial" | "active" | "grace" | "expired" | "blocked" | string;
+  features: Record<string, boolean>;
+  usage: Record<string, HostedAccessUsage>;
+  payment?: HostedAccessPayment;
+  payment_history?: HostedAccessPaymentHistoryItem[];
+  available_plans?: HostedAccessPlanOffer[];
+  upgrade_url?: string;
+  message?: string;
+}
+
+export interface SecurityVaultStatus {
+  available?: boolean;
+  configured: boolean;
+  mode?: "standard" | "private" | string;
+  status?: string;
+  schema_version?: number;
+  checkpoint_version?: number;
+  locked?: boolean;
+  legacy_plaintext_auth?: boolean;
+  plaintext_purged_at?: string;
+  created_at?: string;
+  updated_at?: string;
+  security_migration_required?: boolean;
+  private_unlock_required?: boolean;
+  destructive_reset_available?: boolean;
+  standard_background_sync?: boolean;
+  zero_knowledge_local_storage?: boolean;
+  field_encryption_active?: boolean;
+  protected_fields?: string[];
+}
+
+export interface CharacterInfo {
+  character_id: number;
+  character_name: string;
+  wallet: number;
+  orders: CharacterOrder[];
+  order_history: HistoricalOrder[];
+  transactions: WalletTransaction[];
+  assets: CharacterAsset[];
+  industry_jobs: CharacterIndustryJob[];
+  skills: SkillSheet | null;
+  risk?: CharacterRiskSummary | null;
+}
+
+export interface PIPlanetRow {
+  character_id: number;
+  character_name: string;
+  planet_id: number;
+  planet_type: string;
+  solar_system_id: number;
+  solar_system_name: string;
+  upgrade_level: number;
+  num_pins: number;
+  extractor_pins: number;
+  factory_pins: number;
+  storage_pins: number;
+  idle_factory_pins: number;
+  expired_extractor_pins: number;
+  routed_pins: number;
+  routed_quantity: number;
+  extractor_units_per_day: number;
+  extractor_value_isk_per_day: number;
+  factory_input_isk_per_day: number;
+  factory_output_isk_per_day: number;
+  factory_net_isk_per_day: number;
+  gross_isk_per_day: number;
+  net_isk_per_day: number;
+  missing_input_isk_per_day: number;
+  cycle_health_score: number;
+  production_chains: number;
+  stored_quantity: number;
+  stored_value_isk: number;
+  estimated_daily_value_isk: number;
+  estimated_monthly_value_isk: number;
+  last_update: string;
+  next_expiry: string;
+  status: string;
+  estimate_basis: string;
+  product_flows?: PIProductFlow[];
+  warnings?: string[];
+}
+
+export interface PIProductFlow {
+  type_id: number;
+  type_name: string;
+  direction: string;
+  source: string;
+  units_per_day: number;
+  value_isk_per_day: number;
+  quantity_per_cycle: number;
+  pin_count: number;
+}
+
+export interface PIPlanetsResponse {
+  planets: PIPlanetRow[];
+  count: number;
+  warnings?: string[];
+}
+
+export interface CharacterOrder {
+  order_id: number;
+  type_id: number;
+  location_id: number;
+  region_id: number;
+  price: number;
+  volume_remain: number;
+  volume_total: number;
+  is_buy_order: boolean;
+  duration: number;
+  issued: string;
+  type_name?: string;
+  location_name?: string;
+}
+
+export interface HistoricalOrder {
+  order_id: number;
+  type_id: number;
+  location_id: number;
+  region_id: number;
+  price: number;
+  volume_remain: number;
+  volume_total: number;
+  is_buy_order: boolean;
+  state: "cancelled" | "expired" | "fulfilled";
+  issued: string;
+  type_name?: string;
+  location_name?: string;
+}
+
+export interface WalletTransaction {
+  transaction_id: number;
+  date: string;
+  type_id: number;
+  location_id: number;
+  unit_price: number;
+  quantity: number;
+  is_buy: boolean;
+  type_name?: string;
+  location_name?: string;
+}
+
+export interface CharacterAsset {
+  item_id: number;
+  type_id: number;
+  location_id: number;
+  location_type: string;
+  location_flag: string;
+  quantity: number;
+  is_singleton: boolean;
+  is_blueprint_copy: boolean;
+  type_name?: string;
+  location_name?: string;
+}
+
+export interface CharacterIndustryJob {
+  job_id: number;
+  installer_id: number;
+  facility_id: number;
+  station_id?: number;
+  activity_id: number;
+  blueprint_id: number;
+  blueprint_type_id: number;
+  blueprint_location_id: number;
+  output_location_id: number;
+  runs: number;
+  cost: number;
+  licensed_runs?: number;
+  probability?: number;
+  product_type_id?: number;
+  status: string;
+  duration: number;
+  start_date: string;
+  end_date: string;
+  pause_date?: string;
+  completed_date?: string;
+  completed_character_id?: number;
+  successful_runs?: number;
+  product_type_name?: string;
+  blueprint_type_name?: string;
+  facility_name?: string;
+}
+
+export interface SkillSheet {
+  skills: { skill_id: number; active_skill_level: number }[];
+  total_sp: number;
+}
+
+export interface CharacterRiskSummary {
+  risk_score: number;
+  risk_level: "safe" | "balanced" | "high" | string;
+  var_95: number;
+  var_99: number;
+  es_95: number;
+  es_99: number;
+  typical_daily_pnl: number;
+  worst_day_loss: number;
+  sample_days: number;
+  window_days: number;
+  capacity_multiplier: number;
+  low_sample?: boolean;
+  var_99_reliable?: boolean;
+}
+
+// --- Undercut Monitor Types ---
+
+export interface UndercutStatus {
+  order_id: number;
+  position: number;
+  total_orders: number;
+  best_price: number;
+  undercut_amount: number;
+  undercut_pct: number;
+  suggested_price: number;
+  book_levels: BookLevel[];
+}
+
+export interface BookLevel {
+  price: number;
+  volume: number;
+  is_player: boolean;
+}
+
+export interface OrderDeskSummary {
+  total_orders: number;
+  buy_orders: number;
+  sell_orders: number;
+  needs_reprice: number;
+  needs_cancel: number;
+  total_notional: number;
+  median_eta_days: number;
+  avg_eta_days: number;
+  worst_eta_days: number;
+  unknown_eta_count: number;
+}
+
+export interface OrderDeskSettings {
+  sales_tax_percent: number;
+  broker_fee_percent: number;
+  target_eta_days: number;
+  warn_expiry_days: number;
+}
+
+export interface OrderDeskOrder {
+  order_id: number;
+  type_id: number;
+  type_name: string;
+  location_id: number;
+  location_name: string;
+  region_id: number;
+  is_buy_order: boolean;
+  price: number;
+  volume_remain: number;
+  volume_total: number;
+  notional: number;
+  net_unit_isk: number;
+  net_notional: number;
+  position: number;
+  total_orders: number;
+  book_available: boolean;
+  best_price: number;
+  suggested_price: number;
+  undercut_amount: number;
+  undercut_pct: number;
+  queue_ahead_qty: number;
+  top_price_qty: number;
+  avg_daily_volume: number;
+  estimated_fill_per_day: number;
+  eta_days: number;
+  issued_at: string;
+  expires_at: string;
+  days_to_expire: number;
+  recommendation: "hold" | "reprice" | "cancel" | string;
+  reason: string;
+}
+
+export interface OrderDeskResponse {
+  summary: OrderDeskSummary;
+  orders: OrderDeskOrder[];
+  settings: OrderDeskSettings;
+}
+
+export type StationCommandAction = "new_entry" | "reprice" | "hold" | "cancel";
+
+export interface StationForecastBand {
+  p50: number;
+  p80: number;
+  p95: number;
+}
+
+export interface StationCommandForecast {
+  daily_volume: StationForecastBand;
+  daily_profit: StationForecastBand;
+  eta_days: StationForecastBand;
+}
+
+export interface StationCommandRow {
+  trade: StationTrade;
+  personalized_score: number;
+  recommended_action: StationCommandAction;
+  action_reason: string;
+  priority: number;
+  active_order_count: number;
+  active_order_at_station: number;
+  open_position_qty: number;
+  expected_delta_daily_profit: number;
+  forecast: StationCommandForecast;
+}
+
+export interface StationCommandSummary {
+  rows: number;
+  new_entry_count: number;
+  reprice_count: number;
+  hold_count: number;
+  cancel_count: number;
+  with_active_orders: number;
+  with_open_positions: number;
+}
+
+export interface StationCommandResult {
+  generated_at: string;
+  summary: StationCommandSummary;
+  rows: StationCommandRow[];
+}
+
+export interface StationCacheMeta {
+  current_revision: number;
+  last_refresh_at?: string;
+  next_expiry_at?: string;
+  min_ttl_sec: number;
+  max_ttl_sec: number;
+  regions: number;
+  entries: number;
+  stale: boolean;
+}
+
+export interface StationCommandResponse {
+  generated_at: string;
+  scope: "single" | "all";
+  scan_scope: string;
+  region_count: number;
+  result_count: number;
+  cache_meta?: StationCacheMeta;
+  command: StationCommandResult;
+  order_desk: OrderDeskResponse;
+  inventory: {
+    open_positions: number;
+    open_quantity: number;
+    transactions: number;
+  };
+}
+
+export type StationTradeStateMode = "done" | "ignored";
+
+export interface StationTradeState {
+  user_id: string;
+  tab: string;
+  type_id: number;
+  station_id: number;
+  region_id: number;
+  mode: StationTradeStateMode;
+  until_revision: number;
+  updated_at: string;
+}
+
+export interface StationAIContextRow {
+  type_id: number;
+  type_name: string;
+  station_name: string;
+  cts: number;
+  margin_percent: number;
+  daily_profit: number;
+  daily_volume: number;
+  s2b_bfs_ratio: number;
+  action: string;
+  reason: string;
+  confidence: string;
+  high_risk: boolean;
+  extreme_price: boolean;
+}
+
+export interface StationAIContextSummary {
+  total_rows: number;
+  visible_rows: number;
+  high_risk_rows: number;
+  extreme_rows: number;
+  avg_cts: number;
+  avg_margin: number;
+  avg_daily_profit: number;
+  avg_daily_volume: number;
+  actionable_rows: number;
+}
+
+export interface StationAIScanSnapshot {
+  scope_mode: "radius" | "single_station" | "region_all";
+  system_name: string;
+  region_id: number;
+  station_id: number;
+  radius: number;
+  min_margin: number;
+  sales_tax_percent: number;
+  broker_fee: number;
+  split_trade_fees: boolean;
+  buy_broker_fee_percent: number;
+  sell_broker_fee_percent: number;
+  buy_sales_tax_percent: number;
+  sell_sales_tax_percent: number;
+  cts_profile: string;
+  min_daily_volume: number;
+  min_item_profit: number;
+  min_s2b_per_day: number;
+  min_bfs_per_day: number;
+  avg_price_period: number;
+  min_period_roi: number;
+  bvs_ratio_min: number;
+  bvs_ratio_max: number;
+  max_pvi: number;
+  max_sds: number;
+  limit_buy_to_price_low: boolean;
+  flag_extreme_prices: boolean;
+  include_structures: boolean;
+  structures_applied: boolean;
+  structure_count: number;
+  structure_ids: number[];
+}
+
+export interface StationAIChatContext {
+  tab_id?: string;
+  tab_title?: string;
+  system_name: string;
+  station_scope: string;
+  region_id: number;
+  station_id: number;
+  radius: number;
+  min_margin: number;
+  min_daily_volume: number;
+  min_item_profit: number;
+  scan_snapshot: StationAIScanSnapshot;
+  summary: StationAIContextSummary;
+  rows: StationAIContextRow[];
+}
+
+export interface StationAIHistoryMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface StationAIChatRequest {
+  provider: "openrouter";
+  api_key: string;
+  model: string;
+  planner_model?: string;
+  temperature: number;
+  max_tokens: number;
+  assistant_name: string;
+  locale: "ru" | "en";
+  user_message: string;
+  enable_wiki_context?: boolean;
+  enable_web_research?: boolean;
+  enable_planner?: boolean;
+  wiki_repo?: string;
+  history?: StationAIHistoryMessage[];
+  context: StationAIChatContext;
+}
+
+export interface StationAIChatResponse {
+  answer: string;
+  provider: string;
+  model: string;
+  assistant: string;
+  intent?: string;
+  pipeline?: {
+    planner_enabled?: boolean;
+    planner_model?: string;
+    response_mode?: string;
+    context_level?: string;
+    agents?: string[];
+  };
+  warnings?: string[];
+  provider_id?: string;
+  provider_usage?: Record<string, unknown>;
+  usage?: StationAIUsage;
+}
+
+export interface StationAIUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+}
+
+export type StationAIStreamMessage =
+  | {
+      type: "progress";
+      message: string;
+      progress_pct?: number;
+      prompt_tokens_est?: number;
+      completion_tokens_est?: number;
+      total_tokens_est?: number;
+    }
+  | {
+      type: "delta";
+      delta: string;
+      progress_pct?: number;
+      completion_tokens_est?: number;
+      total_tokens_est?: number;
+    }
+  | ({
+      type: "usage";
+      progress_pct?: number;
+    } & StationAIUsage)
+  | ({
+      type: "result";
+      progress_pct?: number;
+      progress_text?: string;
+    } & StationAIChatResponse)
+  | { type: "error"; message: string };
+
+// --- Industry Types ---
+
+export interface IndustryParams {
+  type_id: number;
+  runs: number;
+  activity_mode?: "auto" | "manufacturing" | "reaction" | "invention";
+  me: number; // Material Efficiency 0-10
+  te: number; // Time Efficiency 0-20
+  system_name: string;
+  station_id?: number; // Optional station/structure ID for price lookup
+  facility_tax: number;
+  structure_bonus: number;
+  broker_fee?: number;
+  sales_tax_percent?: number;
+  max_depth?: number;
+  own_blueprint?: boolean;
+  blueprint_cost?: number;
+  blueprint_is_bpo?: boolean;
+  invention_chance?: number;
+  decryptor_cost?: number;
+  invention_output_runs?: number;
+}
+
+export interface BlueprintInfo {
+  blueprint_type_id: number;
+  product_quantity: number;
+  me: number;
+  te: number;
+  time: number;
+  activity?: string;
+  probability?: number;
+}
+
+export interface MaterialNode {
+  type_id: number;
+  type_name: string;
+  quantity: number;
+  activity?: string;
+  runs?: number;
+  is_base: boolean;
+  buy_price: number;
+  material_cost?: number;
+  build_cost: number;
+  should_build: boolean;
+  job_cost: number;
+  children: MaterialNode[] | null;
+  blueprint: BlueprintInfo | null;
+  depth: number;
+}
+
+export interface FlatMaterial {
+  type_id: number;
+  type_name: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  volume: number;
+}
+
+export interface IndustryActivityStep {
+  activity: "manufacturing" | "reaction" | "invention" | string;
+  blueprint_type_id: number;
+  blueprint_name: string;
+  product_type_id: number;
+  product_name: string;
+  runs: number;
+  output_quantity: number;
+  material_cost: number;
+  job_cost: number;
+  total_cost: number;
+  time_seconds: number;
+  probability?: number;
+  expected_attempts?: number;
+  reason?: string;
+}
+
+export interface IndustryAnalysis {
+  target_type_id: number;
+  target_type_name: string;
+  runs: number;
+  total_quantity: number;
+  market_buy_price: number;
+  total_build_cost: number;
+  optimal_build_cost: number;
+  savings: number;
+  savings_percent: number;
+  sell_revenue: number;
+  profit: number;
+  profit_percent: number;
+  maker_sell_revenue?: number;
+  maker_sell_profit?: number;
+  instant_sell_revenue?: number;
+  instant_sell_profit?: number;
+  instant_sell_available?: boolean;
+  isk_per_hour: number;
+  manufacturing_time: number;
+  total_activity_time?: number;
+  total_job_cost: number;
+  manufacturing_cost?: number;
+  reaction_cost?: number;
+  invention_cost?: number;
+  invention_job_cost?: number;
+  invention_attempts?: number;
+  invention_probability?: number;
+  activity_mode?: "auto" | "manufacturing" | "reaction" | "invention" | string;
+  activity_plan?: IndustryActivityStep[];
+  material_tree: MaterialNode;
+  flat_materials: FlatMaterial[];
+  system_cost_index: number;
+  region_id: number;
+  region_name?: string;
+  blueprint_cost_included: number;
+}
+
+export type NdjsonIndustryMessage =
+  | { type: "progress"; message: string }
+  | { type: "result"; data: IndustryAnalysis }
+  | { type: "error"; message: string };
+
+export interface BuildableItem {
+  type_id: number;
+  type_name: string;
+  has_blueprint: boolean;
+}
+
+export interface IndustrySystem {
+  solar_system_id: number;
+  solar_system_name: string;
+  manufacturing: number;
+  reaction: number;
+  copying: number;
+  invention: number;
+}
+
+export type IndustryProjectStatus =
+  | "draft"
+  | "planned"
+  | "active"
+  | "completed"
+  | "archived";
+
+export type IndustryTaskStatus =
+  | "planned"
+  | "ready"
+  | "active"
+  | "paused"
+  | "completed"
+  | "blocked"
+  | "cancelled";
+
+export type IndustryJobStatus =
+  | "planned"
+  | "queued"
+  | "active"
+  | "paused"
+  | "completed"
+  | "failed"
+  | "cancelled";
+
+export interface IndustryProject {
+  id: number;
+  user_id: string;
+  name: string;
+  status: IndustryProjectStatus;
+  strategy: "conservative" | "balanced" | "aggressive";
+  notes: string;
+  params: unknown;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IndustryTaskPlanInput {
+  // Source task ID used to remap links on replace/append plan apply.
+  task_id?: number;
+  // Existing task ID, or negative row ref (-1 = first task row in current patch).
+  parent_task_id?: number;
+  name: string;
+  activity: string;
+  product_type_id?: number;
+  target_runs?: number;
+  planned_start?: string;
+  planned_end?: string;
+  priority?: number;
+  status?: IndustryTaskStatus;
+  constraints?: unknown;
+}
+
+export interface IndustryJobPlanInput {
+  // Existing task ID, or negative row ref (-1 = first task row in current patch).
+  task_id?: number;
+  character_id?: number;
+  facility_id?: number;
+  activity: string;
+  runs?: number;
+  duration_seconds?: number;
+  cost_isk?: number;
+  status?: IndustryJobStatus;
+  started_at?: string;
+  finished_at?: string;
+  external_job_id?: number;
+  notes?: string;
+}
+
+export interface IndustryMaterialPlanInput {
+  task_id?: number;
+  type_id: number;
+  type_name?: string;
+  required_qty?: number;
+  available_qty?: number;
+  buy_qty?: number;
+  build_qty?: number;
+  unit_cost_isk?: number;
+  source?: "market" | "stock" | "build" | "reprocess" | "contract";
+}
+
+export interface IndustryBlueprintPoolInput {
+  blueprint_type_id: number;
+  blueprint_name?: string;
+  location_id?: number;
+  quantity?: number;
+  me?: number;
+  te?: number;
+  is_bpo?: boolean;
+  available_runs?: number;
+}
+
+export interface IndustryPlanSchedulerInput {
+  enabled?: boolean;
+  slot_count?: number;
+  max_job_runs?: number;
+  max_job_duration_seconds?: number;
+  window_days?: number;
+  queue_status?: IndustryJobStatus;
+}
+
+export interface IndustryPlanPatch {
+  replace?: boolean;
+  replace_blueprints?: boolean;
+  project_status?: IndustryProjectStatus;
+  tasks?: IndustryTaskPlanInput[];
+  jobs?: IndustryJobPlanInput[];
+  materials?: IndustryMaterialPlanInput[];
+  blueprints?: IndustryBlueprintPoolInput[];
+  scheduler?: IndustryPlanSchedulerInput;
+  strict_bp_bypass?: boolean;
+}
+
+export interface IndustryPlanSummary {
+  project_id: number;
+  project_status: IndustryProjectStatus;
+  replaced: boolean;
+  tasks_inserted: number;
+  jobs_inserted: number;
+  materials_upserted: number;
+  blueprints_upserted: number;
+  scheduler_applied?: boolean;
+  jobs_split_from?: number;
+  jobs_planned_total?: number;
+  warnings?: string[];
+  updated_at: string;
+}
+
+export interface IndustryTaskPreview {
+  input_index: number;
+  task_id: number;
+  parent_task_id: number;
+  name: string;
+  activity: string;
+  target_runs: number;
+  planned_start: string;
+  planned_end: string;
+  priority: number;
+}
+
+export interface IndustryPlanPreview {
+  project_id: number;
+  replace: boolean;
+  summary: IndustryPlanSummary;
+  tasks: IndustryTaskPreview[];
+  jobs: IndustryJobPlanInput[];
+  warnings: string[];
+}
+
+export interface IndustryJob {
+  id: number;
+  user_id: string;
+  project_id: number;
+  task_id: number;
+  character_id: number;
+  facility_id: number;
+  activity: string;
+  runs: number;
+  duration_seconds: number;
+  cost_isk: number;
+  status: IndustryJobStatus;
+  started_at: string;
+  finished_at: string;
+  external_job_id: number;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IndustryLedgerEntry {
+  job_id: number;
+  project_id: number;
+  project_name: string;
+  task_id: number;
+  task_name: string;
+  character_id: number;
+  facility_id: number;
+  activity: string;
+  runs: number;
+  duration_seconds: number;
+  cost_isk: number;
+  status: IndustryJobStatus;
+  started_at: string;
+  finished_at: string;
+  external_job_id: number;
+  notes: string;
+  updated_at: string;
+}
+
+export interface IndustryLedger {
+  project_id: number;
+  status_filter: string;
+  limit: number;
+  total: number;
+  planned: number;
+  active: number;
+  completed: number;
+  failed: number;
+  cancelled: number;
+  total_cost_isk: number;
+  entries: IndustryLedgerEntry[];
+}
+
+export interface IndustryTaskRecord {
+  id: number;
+  user_id: string;
+  project_id: number;
+  parent_task_id: number;
+  name: string;
+  activity: string;
+  product_type_id: number;
+  target_runs: number;
+  planned_start: string;
+  planned_end: string;
+  priority: number;
+  status: IndustryTaskStatus;
+  constraints: unknown;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IndustryMaterialPlanRecord {
+  id: number;
+  user_id: string;
+  project_id: number;
+  task_id: number;
+  type_id: number;
+  type_name: string;
+  required_qty: number;
+  available_qty: number;
+  buy_qty: number;
+  build_qty: number;
+  unit_cost_isk: number;
+  source: "market" | "stock" | "build" | "reprocess" | "contract";
+  updated_at: string;
+}
+
+export interface IndustryBlueprintPoolRecord {
+  id: number;
+  user_id: string;
+  project_id: number;
+  blueprint_type_id: number;
+  blueprint_name: string;
+  location_id: number;
+  quantity: number;
+  me: number;
+  te: number;
+  is_bpo: boolean;
+  available_runs: number;
+  updated_at: string;
+}
+
+export interface IndustryMaterialDiff {
+  type_id: number;
+  type_name: string;
+  required_qty: number;
+  available_qty: number;
+  buy_qty: number;
+  build_qty: number;
+  missing_qty: number;
+}
+
+export interface IndustryProjectSnapshot {
+  project: IndustryProject;
+  tasks: IndustryTaskRecord[];
+  jobs: IndustryJob[];
+  materials: IndustryMaterialPlanRecord[];
+  blueprints: IndustryBlueprintPoolRecord[];
+  material_diff: IndustryMaterialDiff[];
+}
+
+export interface IndustryCoverageMaterialNeed {
+  type_id: number;
+  type_name?: string;
+  required_qty: number;
+}
+
+export interface IndustryCoverageBlueprintNeed {
+  blueprint_type_id: number;
+  blueprint_name?: string;
+  activity?: string;
+  required_runs?: number;
+}
+
+export interface IndustryCoverageMaterialRow {
+  type_id: number;
+  type_name: string;
+  required_qty: number;
+  available_qty: number;
+  missing_qty: number;
+  coverage_pct: number;
+  status: "covered" | "partial" | "missing" | string;
+}
+
+export interface IndustryCoverageBlueprintRow {
+  blueprint_type_id: number;
+  blueprint_name: string;
+  activity: string;
+  required_runs: number;
+  owned_qty: number;
+  bpo_qty: number;
+  bpc_qty: number;
+  available_runs: number;
+  best_me: number;
+  best_te: number;
+  coverage_pct: number;
+  status: "ready" | "partial" | "missing" | string;
+}
+
+export interface IndustryCoverageAction {
+  step: number;
+  action:
+    | "use_stock"
+    | "buy_missing"
+    | "use_blueprint"
+    | "acquire_blueprint"
+    | "start_jobs"
+    | "resolve_blockers"
+    | string;
+  status: "ready" | "needed" | "partial" | "missing" | "blocked" | string;
+  label: string;
+  detail?: string;
+  type_id?: number;
+  type_name?: string;
+  quantity?: number;
+  required_qty?: number;
+  available_qty?: number;
+  missing_qty?: number;
+  blocking: boolean;
+}
+
+export interface IndustryCoverageSummary {
+  materials: number;
+  materials_covered: number;
+  materials_missing: number;
+  required_units: number;
+  available_units: number;
+  missing_units: number;
+  material_coverage_pct: number;
+  blueprints: number;
+  blueprints_ready: number;
+  blueprints_missing: number;
+  can_start_now: boolean;
+}
+
+export interface IndustryCoverageResult {
+  summary: IndustryCoverageSummary;
+  materials: IndustryCoverageMaterialRow[];
+  blueprints: IndustryCoverageBlueprintRow[];
+  actions: IndustryCoverageAction[];
+  warnings?: string[];
+}
+
+// --- Portfolio P&L Types ---
+
+export interface DailyPnLEntry {
+  date: string;
+  buy_total: number;
+  sell_total: number;
+  net_pnl: number;
+  cumulative_pnl: number;
+  drawdown_pct: number;
+  transactions: number;
+}
+
+export interface PortfolioPnLStats {
+  total_pnl: number;
+  avg_daily_pnl: number;
+  best_day_pnl: number;
+  best_day_date: string;
+  worst_day_pnl: number;
+  worst_day_date: string;
+  profitable_days: number;
+  losing_days: number;
+  total_days: number;
+  win_rate: number;
+  total_bought: number;
+  total_sold: number;
+  roi_percent: number;
+  // Enhanced analytics
+  sharpe_ratio: number;
+  max_drawdown_pct: number;
+  max_drawdown_isk: number;
+  max_drawdown_days: number;
+  calmar_ratio: number;
+  profit_factor: number;
+  avg_win: number;
+  avg_loss: number;
+  expectancy_per_trade: number;
+  realized_trades: number;
+  realized_quantity: number;
+  open_positions: number;
+  open_cost_basis: number;
+  total_fees: number;
+  total_taxes: number;
+}
+
+export interface StationPnL {
+  location_id: number;
+  location_name: string;
+  total_bought: number;
+  total_sold: number;
+  net_pnl: number;
+  transactions: number;
+}
+
+export interface ItemPnL {
+  type_id: number;
+  type_name: string;
+  total_bought: number;
+  total_sold: number;
+  net_pnl: number;
+  qty_bought: number;
+  qty_sold: number;
+  avg_buy_price: number;
+  avg_sell_price: number;
+  margin_percent: number;
+  transactions: number;
+}
+
+export interface PortfolioSlotEfficiency {
+  type_id: number;
+  type_name: string;
+  order_slots: number;
+  active_orders: number;
+  active_buy_orders: number;
+  active_sell_orders: number;
+  slot_source: string;
+  realized_pnl: number;
+  unrealized_pnl: number;
+  total_pnl: number;
+  turnover_isk: number;
+  capital_tied_isk: number;
+  open_cost_basis_isk: number;
+  active_order_value_isk: number;
+  buy_order_value_isk: number;
+  sell_order_value_isk: number;
+  isk_per_slot: number;
+  pnl_per_slot: number;
+  turnover_per_slot: number;
+  capital_per_slot: number;
+  avg_entry_price: number;
+  avg_exit_price: number;
+  fees_taxes_isk: number;
+  trades: number;
+  win_rate_pct: number;
+  avg_holding_days: number;
+  slot_efficiency_score: number;
+  review: string;
+}
+
+export interface RealizedTrade {
+  type_id: number;
+  type_name: string;
+  quantity: number;
+  buy_transaction_id: number;
+  sell_transaction_id: number;
+  buy_date: string;
+  sell_date: string;
+  holding_days: number;
+  buy_location_id: number;
+  buy_location_name: string;
+  sell_location_id: number;
+  sell_location_name: string;
+  buy_unit_price: number;
+  sell_unit_price: number;
+  buy_gross: number;
+  sell_gross: number;
+  buy_fee: number;
+  sell_broker_fee: number;
+  sell_tax: number;
+  buy_total: number;
+  sell_total: number;
+  realized_pnl: number;
+  margin_percent: number;
+  unmatched?: boolean;
+}
+
+export interface OpenPosition {
+  type_id: number;
+  type_name: string;
+  location_id: number;
+  location_name: string;
+  quantity: number;
+  avg_cost: number;
+  cost_basis: number;
+  oldest_lot_date: string;
+}
+
+export interface MatchingCoverage {
+  total_sell_qty: number;
+  matched_sell_qty: number;
+  unmatched_sell_qty: number;
+  total_sell_value: number;
+  matched_sell_value: number;
+  unmatched_sell_value: number;
+  match_rate_qty_pct: number;
+  match_rate_value_pct: number;
+}
+
+export interface PortfolioSettings {
+  lookback_days: number;
+  sales_tax_percent: number;
+  broker_fee_percent: number;
+  ledger_limit: number;
+  include_unmatched_sell: boolean;
+}
+
+export interface PortfolioPnL {
+  daily_pnl: DailyPnLEntry[];
+  summary: PortfolioPnLStats;
+  top_items: ItemPnL[];
+  top_stations: StationPnL[];
+  ledger: RealizedTrade[];
+  open_positions: OpenPosition[];
+  slot_efficiency: PortfolioSlotEfficiency[];
+  coverage: MatchingCoverage;
+  settings: PortfolioSettings;
+}
+
+export interface EveLedgerSummary {
+  wallet_isk: number;
+  estimated_capital_isk: number;
+  journal_income_isk: number;
+  journal_outgoing_isk: number;
+  journal_net_isk: number;
+  trading_pnl_isk: number;
+  trading_cashflow_isk: number;
+  other_income_isk: number;
+  other_outgoing_isk: number;
+  other_net_isk: number;
+  inventory_mtm_isk: number;
+  inventory_cost_basis_isk: number;
+  unrealized_pnl_isk: number;
+  sell_orders_value_isk: number;
+  buy_orders_value_isk: number;
+  open_orders_value_isk: number;
+  journal_entries: number;
+  transaction_count: number;
+  asset_types: number;
+  asset_units: number;
+  priced_asset_types: number;
+  unpriced_asset_types: number;
+  unpriced_asset_units: number;
+}
+
+export interface EveLedgerCurvePoint {
+  period: string;
+  start_date: string;
+  end_date: string;
+  income_isk: number;
+  outgoing_isk: number;
+  net_cashflow_isk: number;
+  trading_pnl_isk: number;
+  other_net_isk: number;
+  capital_isk: number;
+  journal_entries: number;
+  transactions: number;
+}
+
+export interface EveLedgerCategory {
+  key: string;
+  label: string;
+  income_isk: number;
+  outgoing_isk: number;
+  net_isk: number;
+  entries: number;
+  is_trading: boolean;
+}
+
+export interface EveLedgerInventoryItem {
+  type_id: number;
+  type_name: string;
+  quantity: number;
+  adjusted_price: number;
+  market_value: number;
+  cost_basis: number;
+  unrealized_pnl: number;
+  priced: boolean;
+}
+
+export interface EveLedgerSettings {
+  lookback_days: number;
+  sales_tax_percent: number;
+  broker_fee_percent: number;
+}
+
+export interface EveLedgerArchiveInfo {
+  enabled: boolean;
+  source: string;
+  characters: number;
+  transaction_rows: number;
+  journal_rows: number;
+  transaction_turnover_isk: number;
+  live_transaction_rows: number;
+  live_journal_rows: number;
+  oldest_transaction_date?: string;
+  newest_transaction_date?: string;
+  oldest_journal_date?: string;
+  newest_journal_date?: string;
+  last_transaction_sync?: string;
+  last_journal_sync?: string;
+  transaction_limit_hit: boolean;
+  journal_limit_hit: boolean;
+  archive_transaction_limit: number;
+  archive_journal_limit: number;
+  using_archive: boolean;
+  using_live: boolean;
+  archive_fallback_used: boolean;
+  archive_coverage_days: number;
+}
+
+export interface EveLedgerDashboard {
+  summary: EveLedgerSummary;
+  daily: EveLedgerCurvePoint[];
+  weekly: EveLedgerCurvePoint[];
+  monthly: EveLedgerCurvePoint[];
+  categories: EveLedgerCategory[];
+  inventory: EveLedgerInventoryItem[];
+  settings: EveLedgerSettings;
+  archive: EveLedgerArchiveInfo;
+  warnings?: string[];
+  portfolio?: PortfolioPnL;
+}
+
+// --- Portfolio Optimizer Types ---
+
+export interface AssetStats {
+  type_id: number;
+  type_name: string;
+  avg_daily_pnl: number;
+  volatility: number;
+  sharpe_ratio: number;
+  current_weight: number;
+  total_invested: number;
+  total_pnl: number;
+  trading_days: number;
+}
+
+export interface FrontierPoint {
+  risk: number;
+  return: number;
+}
+
+export interface AllocationSuggestion {
+  type_id: number;
+  type_name: string;
+  action: "increase" | "decrease" | "hold";
+  current_pct: number;
+  optimal_pct: number;
+  delta_pct: number;
+  reason: string;
+}
+
+export interface PortfolioCapital {
+  wallet_isk: number;
+  inventory_cost_isk: number;
+  inventory_mark_isk: number;
+  active_buy_order_isk: number;
+  active_sell_order_isk: number;
+  used_capital_isk: number;
+  total_exposure_isk: number;
+  estimated_equity_isk: number;
+  free_capital_pct: number;
+  locked_buy_pct: number;
+  inventory_pct: number;
+  sell_backlog_pct: number;
+  concentration_hhi: number;
+  top_exposure_pct: number;
+  risk_score: number;
+  risk_level: string;
+  warnings?: string[];
+}
+
+export interface PortfolioPositionRisk {
+  type_id: number;
+  type_name: string;
+  inventory_qty: number;
+  asset_qty?: number;
+  asset_backed?: boolean;
+  inventory_cost_isk: number;
+  inventory_mark_isk: number;
+  inventory_source?: string;
+  unrealized_pnl: number;
+  unrealized_roi_pct: number;
+  active_buy_qty: number;
+  active_buy_isk: number;
+  active_sell_qty: number;
+  active_sell_isk: number;
+  recent_sell_qty: number;
+  avg_daily_sell_qty: number;
+  days_to_liquidate: number;
+  realized_pnl: number;
+  avg_daily_pnl: number;
+  trading_days: number;
+  exposure_isk: number;
+  exposure_pct: number;
+  target_pct: number;
+  delta_pct: number;
+  concentration_risk: number;
+  liquidity_risk: number;
+  backlog_risk: number;
+  loss_risk: number;
+  stale_risk: number;
+  risk_score: number;
+  risk_level: string;
+  action: "increase" | "hold" | "reduce" | "liquidate" | "pause_buy" | string;
+  reason: string;
+  max_capital_isk: number;
+  suggested_buy_isk: number;
+  suggested_sell_isk: number;
+  mark_price: number;
+  mark_price_source: string;
+  oldest_inventory_date: string;
+}
+
+export interface PortfolioOptimization {
+  assets: AssetStats[];
+  correlation_matrix: number[][];
+  current_weights: number[];
+  optimal_weights: number[];
+  min_var_weights: number[];
+  efficient_frontier: FrontierPoint[];
+  diversification_ratio: number;
+  current_sharpe: number;
+  optimal_sharpe: number;
+  min_var_sharpe: number;
+  hhi: number;
+  suggestions: AllocationSuggestion[];
+  optimizer_ready?: boolean;
+  diagnostic?: OptimizerDiagnostic | null;
+  capital?: PortfolioCapital;
+  position_risks?: PortfolioPositionRisk[];
+  warnings?: string[];
+}
+
+export interface DiagnosticItem {
+  type_id: number;
+  type_name: string;
+  trading_days: number;
+  transactions: number;
+}
+
+export interface OptimizerDiagnostic {
+  total_transactions: number;
+  within_lookback: number;
+  unique_days: number;
+  unique_items: number;
+  qualified_items: number;
+  min_days_required: number;
+  top_items: DiagnosticItem[];
+}
+
+// --- Demand / War Tracker Types ---
+
+export interface DemandRegion {
+  region_id: number;
+  region_name: string;
+  hot_score: number;
+  status: "war" | "conflict" | "elevated" | "normal";
+  kills_today: number;
+  kills_baseline: number;
+  isk_destroyed: number;
+  active_players: number;
+  top_ships: string[];
+  updated_at?: string;
+}
+
+export interface DemandRegionsResponse {
+  regions: DemandRegion[];
+  count: number;
+  cache_age_minutes: number;
+  stale: boolean;
+}
+
+export interface HotZonesResponse {
+  hot_zones: DemandRegion[];
+  count: number;
+  from_cache: boolean;
+}
+
+export interface DemandRegionResponse {
+  region: DemandRegion;
+  from_cache: boolean;
+}
+
+export interface TradeOpportunity {
+  type_id: number;
+  type_name: string;
+  category: "ship" | "module" | "ammo" | "drone";
+  kills_per_day: number;
+  jita_price: number;
+  region_price: number;
+  profit_per_unit: number;
+  profit_percent: number;
+  daily_volume: number;
+  daily_profit: number;
+  jita_volume: number;
+  region_volume: number;
+  data_source?: "killmail" | "static";
+  volume?: number;
+}
+
+export interface RegionOpportunities {
+  region_id: number;
+  region_name: string;
+  status: string;
+  hot_score: number;
+  security_class: "highsec" | "lowsec" | "nullsec";
+  security_blocks: ("high" | "low" | "null")[];
+  jumps_from_jita: number;
+  main_system: string;
+  ships: TradeOpportunity[];
+  modules: TradeOpportunity[];
+  ammo: TradeOpportunity[];
+  total_potential: number;
+}
+
+// --- PLEX+ Types ---
+
+export interface PLEXGlobalPrice {
+  buy_price: number;
+  sell_price: number;
+  spread: number;
+  spread_pct: number;
+  volume_24h: number;
+  buy_orders: number;
+  sell_orders: number;
+  percentile_90d: number;
+}
+
+export interface ArbitragePath {
+  name: string;
+  type: "nes_sell" | "nes_process" | "market_process" | "spread";
+  plex_cost: number;
+  cost_isk: number;
+  revenue_gross: number;
+  revenue_isk: number;
+  profit_isk: number;
+  roi: number;
+  viable: boolean;
+  no_data: boolean;
+  detail: string;
+  break_even_plex: number;
+  est_minutes: number;
+  isk_per_hour: number;
+  slippage_pct: number;
+  adjusted_profit_isk: number;
+}
+
+export interface SPFarmResult {
+  omega_cost_plex: number;
+  omega_cost_isk: number;
+  extractors_per_month: number;
+  extractor_cost_plex: number;
+  extractor_cost_isk: number;
+  extractor_buy_price: number;
+  extractor_sell_price: number;
+  total_cost_isk: number;
+  injectors_produced: number;
+  injector_sell_price: number;
+  injector_buy_price: number;
+  revenue_isk: number;
+  profit_isk: number;
+  profit_per_day: number;
+  roi: number;
+  viable: boolean;
+  extractors_plus5: number;
+  profit_plus5: number;
+  profit_per_day_plus5: number;
+  roi_plus5: number;
+  // Startup & multi-char
+  startup_sp: number;
+  startup_train_days: number;
+  startup_cost_isk: number;
+  payback_days: number;
+  mptc_cost_plex: number;
+  mptc_cost_isk: number;
+  // Omega ISK value
+  omega_isk_value: number;
+  plex_unit_price: number;
+  // Instant sell alternative
+  instant_sell_revenue_isk: number;
+  instant_sell_profit_isk: number;
+  instant_sell_roi: number;
+  instant_sell_profit_plus5: number;
+  instant_sell_roi_plus5: number;
+  break_even_plex: number;
+}
+
+export interface PLEXIndicators {
+  sma7: number;
+  sma30: number;
+  bollinger_upper: number;
+  bollinger_middle: number;
+  bollinger_lower: number;
+  rsi: number;
+  change_24h: number;
+  change_7d: number;
+  change_30d: number;
+  avg_volume_30d: number;
+  volume_today: number;
+  volume_sigma: number;
+  ccp_sale_signal: boolean;
+  volatility_20d: number;
+  vol_regime: "low" | "medium" | "high" | "";
+}
+
+export interface PLEXSignal {
+  action: "BUY" | "SELL" | "HOLD";
+  confidence: number;
+  reasons: string[];
+}
+
+export interface PricePoint {
+  date: string;
+  average: number;
+  high: number;
+  low: number;
+  volume: number;
+}
+
+export interface ChartOverlayPoint {
+  date: string;
+  value: number;
+}
+
+export interface ChartOverlays {
+  sma7?: ChartOverlayPoint[];
+  sma30?: ChartOverlayPoint[];
+  bollinger_upper?: ChartOverlayPoint[];
+  bollinger_lower?: ChartOverlayPoint[];
+}
+
+export interface ArbHistoryPoint {
+  date: string;
+  profit_isk: number;
+  roi: number;
+}
+
+export interface ArbHistoryData {
+  extractor_nes?: ArbHistoryPoint[];
+  sp_chain_nes?: ArbHistoryPoint[];
+  mptc_nes?: ArbHistoryPoint[];
+  sp_farm_profit?: ArbHistoryPoint[];
+}
+
+export interface DepthSummary {
+  total_volume: number;
+  best_price: number;
+  worst_price: number;
+  levels: number;
+}
+
+export interface MarketDepthInfo {
+  plex_sell_depth_5: DepthSummary;
+  extractor_sell_qty: number;
+  extractor_buy_qty: number;
+  injector_sell_qty: number;
+  injector_buy_qty: number;
+  mptc_sell_qty: number;
+  mptc_buy_qty: number;
+  extractor_fill_hours: number;
+  injector_fill_hours: number;
+  mptc_fill_hours: number;
+  plex_fill_hours: number;
+}
+
+export interface InjectionTier {
+  label: string;
+  sp_received: number;
+  isk_per_sp: number;
+  efficiency: number;
+}
+
+export interface OmegaComparison {
+  plex_needed: number;
+  total_isk: number;
+  real_money_usd: number;
+  isk_per_usd: number;
+}
+
+export interface CrossHubArbitrage {
+  item_name: string;
+  type_id: number;
+  best_hub: string;
+  best_price: number;
+  jita_price: number;
+  diff_pct: number;
+  profit_isk: number;
+  viable: boolean;
+}
+
+export interface PLEXDashboard {
+  plex_price: PLEXGlobalPrice;
+  arbitrage: ArbitragePath[];
+  sp_farm: SPFarmResult;
+  indicators: PLEXIndicators | null;
+  chart_overlays?: ChartOverlays | null;
+  arb_history?: ArbHistoryData | null;
+  market_depth?: MarketDepthInfo | null;
+  signal: PLEXSignal;
+  history: PricePoint[];
+  injection_tiers?: InjectionTier[] | null;
+  omega_comparison?: OmegaComparison | null;
+  cross_hub?: CrossHubArbitrage[] | null;
+}
+
+// ============================================================
+// Corporation types
+// ============================================================
+
+export interface CharacterRoles {
+  roles: string[];
+  is_director: boolean;
+  corporation_id: number;
+}
+
+export interface CorpWalletDivision {
+  division: number;
+  name: string;
+  balance: number;
+}
+
+export interface IncomeSource {
+  category: string;
+  label: string;
+  amount: number;
+  percent: number;
+}
+
+export interface DailyPnLEntry {
+  date: string;
+  revenue: number;
+  expenses: number;
+  net_income: number;
+  cumulative: number;
+  transactions: number;
+}
+
+export interface MemberContribution {
+  character_id: number;
+  name: string;
+  total_isk: number;
+  category: string;
+  is_online: boolean;
+}
+
+export interface MemberSummary {
+  total_members: number;
+  active_last_7d: number;
+  active_last_30d: number;
+  inactive_30d: number;
+  miners: number;
+  ratters: number;
+  traders: number;
+  industrialists: number;
+  pvpers: number;
+  other: number;
+}
+
+export interface ProductEntry {
+  type_id: number;
+  type_name: string;
+  runs: number;
+  jobs: number;
+  estimated_isk?: number;
+}
+
+export interface OreEntry {
+  type_id: number;
+  type_name: string;
+  quantity: number;
+  estimated_isk?: number;
+}
+
+export interface IndustrySummary {
+  active_jobs: number;
+  completed_jobs_30d: number;
+  production_value: number;
+  top_products: ProductEntry[];
+}
+
+export interface MiningSummary {
+  total_volume_30d: number;
+  estimated_isk: number;
+  active_miners: number;
+  top_ores: OreEntry[];
+}
+
+export interface MarketSummary {
+  active_buy_orders: number;
+  active_sell_orders: number;
+  total_buy_value: number;
+  total_sell_value: number;
+  unique_traders: number;
+}
+
+export interface CorpJournalEntry {
+  id: number;
+  date: string;
+  ref_type: string;
+  amount: number;
+  balance: number;
+  description: string;
+  first_party_id: number;
+  first_party_name: string;
+  second_party_id: number;
+  second_party_name: string;
+}
+
+export interface CorpMember {
+  character_id: number;
+  name: string;
+  last_login: string;
+  logoff_date: string;
+  ship_type_id: number;
+  ship_name: string;
+  location_id: number;
+  system_id: number;
+  system_name: string;
+}
+
+export interface CorpMarketOrderDetail {
+  order_id: number;
+  character_id: number;
+  character_name: string;
+  type_id: number;
+  type_name: string;
+  price: number;
+  volume_remain: number;
+  volume_total: number;
+  is_buy_order: boolean;
+  location_id: number;
+  location_name: string;
+  issued: string;
+  duration: number;
+  region_id: number;
+}
+
+export interface CorpIndustryJob {
+  job_id: number;
+  installer_id: number;
+  installer_name: string;
+  activity: string;
+  blueprint_type_id: number;
+  product_type_id: number;
+  product_name: string;
+  status: string;
+  runs: number;
+  start_date: string;
+  end_date: string;
+  location_id: number;
+  location_name: string;
+}
+
+export interface CorpMiningEntry {
+  character_id: number;
+  character_name: string;
+  date: string;
+  type_id: number;
+  type_name: string;
+  quantity: number;
+}
+
+export interface CorpDashboard {
+  info: {
+    corporation_id: number;
+    name: string;
+    ticker: string;
+    member_count: number;
+  };
+  is_demo: boolean;
+  wallets: CorpWalletDivision[];
+  total_balance: number;
+  revenue_30d: number;
+  expenses_30d: number;
+  net_income_30d: number;
+  revenue_7d: number;
+  expenses_7d: number;
+  net_income_7d: number;
+  income_by_source: IncomeSource[];
+  daily_pnl: DailyPnLEntry[];
+  top_contributors: MemberContribution[];
+  member_summary: MemberSummary;
+  industry_summary: IndustrySummary;
+  mining_summary: MiningSummary;
+  market_summary: MarketSummary;
+}
+
+export interface SystemDanger {
+  SystemID: number;
+  SystemName: string;
+  Security: number;
+  KillsTotal: number;
+  DangerLevel: "green" | "yellow" | "red";
+  IsSmartbomb: boolean;
+  IsInterdictor: boolean;
+  TotalISK: number;
+}
+
+export interface KillSummary {
+  KillmailID: number;
+  VictimShip: string;
+  AttackerShips: string[];
+  Corporations: string[];
+  AttackerCount: number;
+  ISKValue: number;
+  KillTime: string;
+  ZKBLink: string;
+  IsSmartbomb: boolean;
+  IsInterdictor: boolean;
+}
+
+export interface RouteSafetySummary {
+  key: string;
+  danger: "green" | "yellow" | "red";
+  kills: number;
+  totalISK: number;
+}
+
+export type RouteState =
+  | { status: "loading" }
+  | { status: "unknown"; reason: "missing" | "error" }
+  | {
+      status: "summary";
+      danger: "green" | "yellow" | "red";
+      kills: number;
+      totalISK: number;
+    }
+  | {
+      status: "full";
+      danger: "green" | "yellow" | "red";
+      kills: number;
+      totalISK: number;
+      systems: SystemDanger[];
+    };
